@@ -330,9 +330,8 @@ public class damas {
                 tab[i][j] = null;
 
         int fileiras = 3;
-        if (TAM > 12){
-            fileiras = 4;
-        }
+        if (TAM == 12) fileiras = 4;
+        if (TAM >= 16) fileiras = 4;
 
         for (int i = 0; i < fileiras; i++)
             for (int j = 0; j < TAM; j++)
@@ -372,7 +371,7 @@ public class damas {
                 int y = lerInt();
 
                 if (y < 0 || y >= TAM || x < 0 || x >= TAM || tab[y][x] == null) {
-                    System.out.println("IMPOSSIVEL: nao tem peça ai!");
+                    System.out.println("IMPOSSIVEL: nao tem peca ai!");
                     continue;
                 }
                 Peca pecaEscolhida = tab[y][x];
@@ -403,6 +402,33 @@ public class damas {
                 esperarEnter();
                 return;
             }
+
+            // >>> NOVO: VERIFICA SE ALGUEM GANHOU <<<
+            // Conta as pecas depois da jogada
+            if (contarPecas('o') == 0) {
+                limparTela();
+                mostrarTabuleiro();
+                System.out.println();
+                System.out.println(VERDE_TEXTO + "========================================" + RESET);
+                System.out.println(VERDE_TEXTO + "  FIM DE JOGO! PRETOS (x) GANHARAM!" + RESET);
+                System.out.println(VERDE_TEXTO + "  As brancas ficaram sem pecas!" + RESET);
+                System.out.println(VERDE_TEXTO + "========================================" + RESET);
+                esperarEnter();
+                return;
+            }
+            if (contarPecas('x') == 0) {
+                limparTela();
+                mostrarTabuleiro();
+                System.out.println();
+                System.out.println(VERDE_TEXTO + "========================================" + RESET);
+                System.out.println(VERDE_TEXTO + "  FIM DE JOGO! BRANCOS (o) GANHARAM!" + RESET);
+                System.out.println(VERDE_TEXTO + "  As pretas ficaram sem pecas!" + RESET);
+                System.out.println(VERDE_TEXTO + "========================================" + RESET);
+                esperarEnter();
+                return;
+            }
+            // >>> FIM DO NOVO <<<
+
             if (!temQueContinuarComendo) {
                 if (vez == 'o') vez = 'x';
                 else vez = 'o';
@@ -473,6 +499,19 @@ public class damas {
             for (int j = 0; j < TAM; j++)
                 if (tab[i][j] != null && tab[i][j].ehDoJogador(jogador) && essaPecaPodeComer(i, j)) return true;
         return false;
+    }
+
+    // >>> NOVO: CONTA QUANTAS PECAS UM JOGADOR AINDA TEM <<<
+    static int contarPecas(char jogador) {
+        int total = 0;
+        for (int i = 0; i < TAM; i++) {
+            for (int j = 0; j < TAM; j++) {
+                if (tab[i][j] != null && tab[i][j].ehDoJogador(jogador)) {
+                    total++;
+                }
+            }
+        }
+        return total;
     }
 
     static void mostrarOndePodeComer(char jogador) {
